@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SD Navigator - Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .login-button {
+            display: inline-block;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .message.hidden {
+            display: none;
+        }
+        .default-message {
+            background: #eef1f8;
+            border: 1px solid #d3daea;
+            color: #4a5568;
+        }
+        .logout-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .session-expired-message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+        }
+        .session-expired-message .detail {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+        .next-step {
+            color: #7f8c8d;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 18px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>SD Navigator</h1>
+        <p class="subtitle">Practice Management Software for California SDP Independent Facilitators</p>
+
+        <div id="defaultMessage" class="message default-message" role="status">
+            Please sign in to continue.
+        </div>
+
+        <div id="logoutMessage" class="message logout-message hidden" role="status">
+            You have been successfully logged out.
+        </div>
+
+        <div id="sessionExpiredMessage" class="message session-expired-message hidden" role="status">
+            ⏱ Your session has ended. Please sign in again.
+            <span class="detail">Sessions end automatically after a period of inactivity.</span>
+        </div>
+
+        <a href="app.html" class="login-button">Sign In to Your Account</a>
+        <p class="next-step">On the next screen, select <strong>LOGIN</strong>. Sign-in opens in a pop-up window. If nothing appears, allow pop-ups for this site.</p>
+    </div>
+
+    <script>
+        // State is determined by the query string alone. Exactly one message shows.
+        // The default is visible in the markup so that a script failure degrades to
+        // neutral copy rather than to no explanation at all.
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var def = document.getElementById('defaultMessage');
+            var out = document.getElementById('logoutMessage');
+            var exp = document.getElementById('sessionExpiredMessage');
+
+            if (params.get('logout') === 'true') {
+                def.classList.add('hidden');
+                out.classList.remove('hidden');
+                // Clear the query string so a later refresh or restored tab does not
+                // re-assert a logout that happened much earlier. The default state
+                // above is what that bare URL now resolves to.
+                setTimeout(function () {
+                    window.history.replaceState({}, document.title, 'login.html');
+                }, 30000);
+            } else if (params.get('reason') === 'session_expired') {
+                def.classList.add('hidden');
+                exp.classList.remove('hidden');
+            }
+            // Otherwise the default message stays visible. No referrer inspection:
+            // the query string is authoritative about why the user is here.
+        })();
+    </script>
+</body>
+</html>
